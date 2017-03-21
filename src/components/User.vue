@@ -5,8 +5,16 @@
       <button type="button" @click="increment()">add</button>
     </div>
     <ul class="User">
-      <li v-for="id in users">
-        {{entities.users[id].id}} -- {{entities.users[id].name}}
+      <li v-for="user in users">
+        {{user.id}} -- {{user.name}}
+        <el-button type="button" @click="handleUpdate(id)">update</el-button>
+        <el-button type="button" @click="handleDelete(id)">delete</el-button>
+      </li>
+    </ul>
+
+    <ul class="User">
+      <li v-for="user in enabledUsers">
+        {{user.id}} -- {{user.name}}
         <el-button type="button" @click="handleUpdate(id)">update</el-button>
         <el-button type="button" @click="handleDelete(id)">delete</el-button>
       </li>
@@ -15,35 +23,25 @@
 </template>
 
 <script>
+import { mapState, mapActions, mapGetters } from 'vuex';
+
 export default {
   name: 'User',
+
   data() {
     return {
-      users: [1, 2, 3],
-      entities: {
-        users: {
-          1: {
-            id: 1,
-            name: 'John Wallson',
-          },
-          2: {
-            id: 2,
-            name: 'Sharelos Homeles',
-          },
-          3: {
-            id: 3,
-            name: 'Moliyati',
-          },
-        },
-      },
       counts: 0,
     };
   },
+
   mounted() {
-    console.log('mounted'); // eslint-disable-line no-console
+    this.fetchUsers();
   },
 
   methods: {
+    ...mapActions([
+      'fetchUsers',
+    ]),
     increment() {
       this.counts = this.counts + 1;
     },
@@ -61,6 +59,15 @@ export default {
         this.entities.users[id].name = newName;
       }
     },
+  },
+
+  computed: {
+    ...mapState({
+      users: state => state.user.users,
+    }),
+    ...mapGetters([
+      'enabledUsers',
+    ]),
   },
 };
 </script>
